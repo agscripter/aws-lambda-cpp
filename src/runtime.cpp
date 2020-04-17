@@ -407,7 +407,7 @@ void listen_messages(std::string message) {
 void start_listener() {
     logging::log_info(LOG_TAG, "Starting listener");
     std::thread t1(listen_messages, "Hello");
-//    t1.join();
+    t1.detach();
 }
 
 AWS_LAMBDA_RUNTIME_API

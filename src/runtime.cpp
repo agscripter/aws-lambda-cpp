@@ -29,7 +29,6 @@
 #include <cstdlib> // for strtoul
 #include <cinttypes>
 #include <thread>
-#include <future>
 
 #define AWS_LAMBDA_RUNTIME_API __attribute__((visibility("default")))
 
@@ -407,7 +406,8 @@ void listen_messages(std::string message) {
 
 void start_listener() {
     logging::log_info(LOG_TAG, "Starting listener");
-    std::async(std::launch::async, listen_messages, "Hello");
+    std::thread t1(listen_messages, "Hello");
+//    t1.join();
 }
 
 AWS_LAMBDA_RUNTIME_API

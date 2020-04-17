@@ -19,6 +19,7 @@
 #include "aws/logging/logging.h"
 #include "aws/http/response.h"
 
+#include <chrono>
 #include <curl/curl.h>
 #include <curl/curlver.h>
 #include <climits> // for ULONG_MAX
@@ -27,6 +28,7 @@
 #include <array>
 #include <cstdlib> // for strtoul
 #include <cinttypes>
+#include <thread>
 
 #define AWS_LAMBDA_RUNTIME_API __attribute__((visibility("default")))
 
@@ -393,6 +395,18 @@ static bool handle_post_outcome(runtime::post_outcome const& o, std::string cons
         request_id.c_str(),
         static_cast<int>(o.get_failure()));
     return false;
+}
+
+void listen_messages() {
+    logging::log_info(LOG_TAG, "Executing thread");
+    std::this_thread::sleep_for(std::chrono::milliseconds (20000));
+    std::function<invocation_response(invocation_request const&)> handler;
+    run_handler(handler);
+}
+
+void start_listener() {
+    std::thread t1(listen_messages, "Hello");
+    t1.join();
 }
 
 AWS_LAMBDA_RUNTIME_API

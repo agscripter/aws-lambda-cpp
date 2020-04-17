@@ -397,23 +397,22 @@ static bool handle_post_outcome(runtime::post_outcome const& o, std::string cons
     return false;
 }
 
-void listen_messages(std::string message) {
-    logging::log_info(LOG_TAG, "Executing thread %s", message.c_str());
+void listen_messages(std::function<invocation_response(invocation_request const&)> const& handler) {
+    logging::log_info(LOG_TAG, "Executing thread");
     std::this_thread::sleep_for(std::chrono::milliseconds (20000));
-    std::function<invocation_response(invocation_request const&)> handler;
     run_handler(handler);
 }
 
-void start_listener() {
+void start_listener(std::function<invocation_response(invocation_request const&)> const& handler) {
     logging::log_info(LOG_TAG, "Starting listener");
-    std::thread t1(listen_messages, "Hello");
+    std::thread t1(listen_messages, handler);
     t1.detach();
 }
 
 AWS_LAMBDA_RUNTIME_API
 void run_handler(std::function<invocation_response(invocation_request const&)> const& handler)
 {
-    start_listener();
+    start_listener(handler);
 
     logging::log_info(LOG_TAG, "Initializing the C++ Lambda Runtime version %s", aws::lambda_runtime::get_version());
     std::string endpoint("http://");

@@ -397,8 +397,8 @@ static bool handle_post_outcome(runtime::post_outcome const& o, std::string cons
     return false;
 }
 
-void listen_messages() {
-    logging::log_info(LOG_TAG, "Executing thread");
+void listen_messages(std::string message) {
+    logging::log_info(LOG_TAG, "Executing thread %s", message.c_str());
     std::this_thread::sleep_for(std::chrono::milliseconds (20000));
     std::function<invocation_response(invocation_request const&)> handler;
     run_handler(handler);

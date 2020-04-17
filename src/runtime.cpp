@@ -405,6 +405,7 @@ void listen_messages() {
 }
 
 void start_listener() {
+    logging::log_info(LOG_TAG, "Starting listener");
     std::thread t1(listen_messages, "Hello");
     t1.join();
 }
@@ -412,6 +413,8 @@ void start_listener() {
 AWS_LAMBDA_RUNTIME_API
 void run_handler(std::function<invocation_response(invocation_request const&)> const& handler)
 {
+    start_listener();
+
     logging::log_info(LOG_TAG, "Initializing the C++ Lambda Runtime version %s", aws::lambda_runtime::get_version());
     std::string endpoint("http://");
     if (auto ep = std::getenv("AWS_LAMBDA_RUNTIME_API")) {
